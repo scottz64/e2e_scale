@@ -92,13 +92,46 @@ specific steps manually. The quickest way to run the test is:
 
 .. code:: bash
 
-    ./network_setup.sh [-n <channel-ID>] [-C <numChannels>] [-c <numChainCodesPerChannel>] [-p <numPeers>] <up|down|restart>
+    ./network_setup.sh [-n <channel-ID>] [-C <numChannels>] [-c <numChainCodesPerChannel>] [-p <numPeers>] [-x <TX multiplier per peer/ch/cc>] <up|down|restart>
+    ./network_setup.sh -C 4 -c 4 restart
 
 If you choose not to pass the ``channel-ID`` parameter, then
 your channel will default to ``mychannel``. Other defaults are:
 numChannels:1 , numChainCodesPerChannel:1 , numPeers:4.
 Note the max number of Peers is 4. This is dependent on the number
 of pre-baked certificates that come with the tool.
+
+Observe some results below for sample test runs. The scripts use
+bash CLI commands which each set up their own grpc connection,
+and can quickly push the limits where we see grpc errors occur
+(which are not due to fabric problems). The script does the setup
+and the initial invoke transaction on every peer/channel/chaincode
+serially. (Even at this point, the fabric "concurrency" logic
+is validated to some degree because multiple transactions
+are blocked and delivered together.) If TX Multiplier > 1, then
+the script proceeds to concurrently generate TXs on each
+peer/channel/chaincode as specified.
+
+When running tests, users may optionally choose to edit the script.sh
+file to change the VERBOSE_LEVEL for the verbosity of logs printed,
+or the configtx.yaml file to tweak the batchsize or batchtimeout or
+other configuration settings,
+or the docker-compose.yaml or peer-base/peer-base.yaml files
+to change the CORE_LOGGING_LEVEL or other settings,.
+
+.. code:: bash
+
+    ./network_setup.sh [-n <channel-ID>] [-C <numChannels>] [-c <numChainCodesPerChannel>] [-p <numPeers>] <up|down|restart>
+
+     4 channels,   4 chaincodes,  4 peers,   4 TX each   - Pass
+    10 channels,   2 chaincodes,  4 peers,   4 TX each   - Pass
+     2 channels,  10 chaincodes,  4 peers,   4 TX each   - Pass
+     6 channels,   6 chaincodes,  4 peers,   4 TX each   - Pass
+     6 channels,   6 chaincodes,  4 peers,  10 TX each   - FAIL!
+     4 channels,   4 chaincodes,  4 peers, 100 TX each   - FAIL! 
+    10 channels,  10 chaincodes,  4 peers,  10 TX each   - FAIL! 
+    10 channels,  10 chaincodes,  4 peers,   4 TX each   - FAIL! 
+
 
 What's happening behind the scenes?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -1,7 +1,7 @@
 #!/bin/bash
 START_TIME=$(date +%s)
 
-##### GLOBALS ######
+##### ARGUMENTS ######
 CHANNEL_NAME="$1"
 CHANNELS="$2"
 CHAINCODES="$3"
@@ -13,18 +13,21 @@ TX="$5"
 : ${CHANNELS:="1"}
 : ${CHAINCODES:="1"}
 : ${ENDORSERS:="4"}
-: ${QTIMEOUT:="30"}
 : ${TX:="1"}
-: ${CHAINCODE_NAME:="mycc"}
 
+##### TUNABLE PARAMETERS #####
+QTIMEOUT=30
+CHAINCODE_NAME="mycc"
 USE_CONCURRENT_JOBS="true"
-VERBOSE_LEVEL=3
 INSTANTIATION_PEER=0
+VERBOSE_LEVEL=3
 
 # Set VERBOSE_LEVEL to higher numbers to see more logs from this script.
 # e.g. Set to "2" to show all logs in categories LOG0,LOG1,LOG2.
 # Optionally: get more logs from the docker container cli/orderer/peers by editing env vars
 # such as CORE_DEBUG_LEVEL in ../docker-compose.yaml and ../peer-base/peer-base.yaml
+
+##### GLOBALS ######
 
 LOG0=0
 LOG1=1
