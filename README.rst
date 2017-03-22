@@ -1,5 +1,5 @@
-e2e_scale - End-to-End Flow test on multiple channels and chaincodes
-===================================================================
+e2e_scale - End-to-End Fabric flow test on multiple channels and chaincodes with concurrency
+============================================================================================
 
 The end-to-end verification tool demonstrates the configuration and
 initial transactions. It uses scripts and docker-compose file to
